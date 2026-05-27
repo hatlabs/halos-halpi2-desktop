@@ -1,0 +1,9 @@
+halos-halpi2-desktop (0.1.0) unstable; urgency=medium
+
+  * Initial release.
+  * HALPI2 desktop hook metapackage with Depends on halos-halpi2,
+    halos-desktop, halos-halpi-desktop-branding.
+  * Pulled in by halos-halpi2's Recommends to bias apt's provider
+    selection for halos-desktop-wallpaper on HALPI2 desktop devices.
+
+ -- Matti Airas <matti.airas@hatlabs.fi>  Wed, 27 May 2026 14:00:00 +0300
