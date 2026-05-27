@@ -50,7 +50,16 @@ function bumpversion {
   #@ Category: Debian
   local part="${1:-patch}"
   echo "📈 Bumping ${part} version..."
-  debtools bash -c "bumpversion ${part} && dch -v \$(cat VERSION) -D unstable --force-distribution 'Release \$(cat VERSION)'"
+  DEBFULLNAME="$(git config --get user.name)" \
+  DEBEMAIL="$(git config --get user.email)" \
+    debtools bash -c "
+      set -euo pipefail
+      bumpversion ${part}
+      next=\$(cat VERSION)
+      dch -v \"\$next\" -D unstable --force-distribution \"Release \$next\"
+      git add debian/changelog
+      git commit --amend --no-edit
+    "
 }
 
 ################################################################################
@@ -123,7 +132,6 @@ function clean {
   echo "🧹 Cleaning build artifacts..."
   rm -f *.deb *.buildinfo *.changes
   rm -rf debian/.debhelper debian/halos-halpi2-desktop debian/debhelper-build-stamp debian/files debian/*.substvars debian/*.log
-  rm -f etc/xdg/pcmanfm/default/desktop-items-1.conf
   echo "✅ Cleanup complete"
 }
 

@@ -1,28 +1,29 @@
 # halos-halpi2-desktop
 
-HALPI2 desktop variant metapackage for HaLOS. Ships a single Debian binary, `halos-halpi2-desktop`, whose role is to pin HALPI2 branding as the resolved provider of the virtual `halos-desktop-wallpaper` on HALPI2 desktop devices.
+HALPI2 desktop variant metapackage for HaLOS. Ships a single Debian binary, `halos-halpi2-desktop`, that marks a HaLOS installation as a HALPI2 desktop variant and pulls in the HALPI2-branded wallpaper as a hard dependency.
 
 Sibling packages:
 - [`hatlabs/halos-halpi-desktop-branding`](https://github.com/hatlabs/halos-halpi-desktop-branding) — the actual HALPI2 wallpaper artifact.
 - [`halos-org/halos-desktop-branding`](https://github.com/halos-org/halos-desktop-branding) — the generic HaLOS wallpaper artifact.
-- [`halos-org/halos-metapackages`](https://github.com/halos-org/halos-metapackages) — `halos-halpi2` (which `Recommends` this package) and `halos-desktop` (which depends on the virtual `halos-desktop-wallpaper`).
+- [`halos-org/halos-metapackages`](https://github.com/halos-org/halos-metapackages) — `halos-halpi2` and `halos-desktop`.
 
 ## What it does
 
-The metapackage's `Depends:` triple — `halos-halpi2`, `halos-desktop`, `halos-halpi-desktop-branding` — is the gating filter. Only HALPI2 desktop systems satisfy it; on HALPI2 headless systems `halos-desktop` is absent and apt skips the recommend silently.
+When installed, this metapackage's `Depends:` triple — `halos-halpi2`, `halos-desktop`, `halos-halpi-desktop-branding` — pulls in the HALPI2 branding provider for the virtual package `halos-desktop-wallpaper` that `halos-desktop` requires. The result on the device: HALPI2-branded wallpaper instead of the generic one.
 
-`halos-halpi2` (in halos-org/halos-metapackages) `Recommends` this package. On `apt upgrade`:
+The package also serves as the future home for any HALPI2-only desktop content (login screen branding, terminal palette, panel theming) — add such packages to `Depends:` here and they propagate to HALPI2 desktop installations through this single hook.
 
-| Device | `halos-halpi2` | `halos-desktop` | Recommend satisfiable? | Result |
-|---|---|---|---|---|
-| HALPI2 desktop | ✓ | ✓ | yes | metapackage pulled in → HALPI2 branding wins as `halos-desktop-wallpaper` provider |
-| HALPI2 headless | ✓ | ✗ | no (`halos-desktop` missing) | skipped silently |
-| RPi5 desktop | ✗ | ✓ | n/a (no `halos-halpi2` recommending it) | generic `halos-desktop-branding` wins |
-| RPi5 headless | ✗ | ✗ | n/a | nothing changes |
+## How it gets installed
 
-The metapackage is the future home for any HALPI2-only desktop content (login screen branding, terminal palette, panel theming, …) — add such packages to its `Depends:` and they propagate via the same mechanism.
+**On new pi-gen images**: a substage in `halos-pi-gen` (see [halos-pi-gen#97](https://github.com/halos-org/halos-pi-gen/issues/97)) installs `halos-halpi2-desktop` at build time on HALPI2 desktop variants, using the same `dpkg -l halos-desktop` check pattern that `stage-halos-marine` already uses for the marine combination metapackages. New HALPI2 desktop images come with HALPI2 branding out of the box.
 
-Why a metapackage rather than apt pinning: discoverability. Operators inspecting `dpkg -l` see `halos-halpi2-desktop` and understand the device variant immediately. A `/etc/apt/preferences.d/` pin would do the wallpaper job but is opaque.
+**On existing field devices**: there is no automatic injection. Operators who want HALPI2 branding on an existing HALPI2 desktop installation run:
+
+```bash
+sudo apt install halos-halpi2-desktop
+```
+
+This explicit install pulls in `halos-halpi-desktop-branding` and swaps it in as the provider for `halos-desktop-wallpaper`. Reversible the same way: `sudo apt install halos-desktop-branding`.
 
 ## Development
 
