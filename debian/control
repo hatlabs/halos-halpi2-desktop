@@ -1,0 +1,25 @@
+Source: halos-halpi2-desktop
+Section: metapackages
+Priority: optional
+Maintainer: Matti Airas <matti.airas@hatlabs.fi>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.2
+Homepage: https://github.com/hatlabs/halos-halpi2-desktop
+Rules-Requires-Root: no
+
+Package: halos-halpi2-desktop
+Architecture: all
+Depends: ${misc:Depends},
+         halos-halpi2,
+         halos-desktop,
+         halos-halpi-desktop-branding
+Description: HALPI2 desktop variant metapackage
+ This metapackage marks a HaLOS installation as a HALPI2 desktop variant
+ and pins the HALPI2-branded wallpaper as the resolved provider of the
+ virtual halos-desktop-wallpaper. Pulled in by halos-halpi2's Recommends
+ on HALPI2 hardware; its Depends triple is the gating filter, so it is
+ silently skipped on HALPI2 headless installations where halos-desktop
+ is not present.
+ .
+ Future HALPI2-only desktop content (login screen branding, terminal
+ palette, panel theming) will be added as dependencies here.

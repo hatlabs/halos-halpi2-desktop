@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+#
+# Pre-commit hook to prevent direct debian/changelog edits.
+# Changelog updates must go through ./run bumpversion which uses dch
+# to ensure proper RFC 2822 date formatting.
+#
+# Bypass: SKIP_CHANGELOG_CHECK=1 git commit ...
+#
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+if [[ "${SKIP_CHANGELOG_CHECK:-}" == "1" ]]; then
+    exit 0
+fi
+
+CHANGELOG_FILES=$(git diff --cached --name-only | grep -E 'debian/changelog$' || true)
+
+if [[ -n "$CHANGELOG_FILES" ]]; then
+    echo "ERROR: Direct debian/changelog edits are not allowed."
+    echo ""
+    echo "Staged changelog files:"
+    echo "$CHANGELOG_FILES" | sed 's/^/  /'
+    echo ""
+    echo "Why: Manual edits often have RFC 2822 date formatting errors. dch handles this correctly."
+    echo ""
+    echo "Solution: ./run bumpversion [patch|minor|major]"
+    echo ""
+    echo "Bypass (e.g., initial changelog): SKIP_CHANGELOG_CHECK=1 git commit ..."
+    exit 1
+fi

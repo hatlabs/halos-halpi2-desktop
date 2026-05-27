@@ -1,0 +1,25 @@
+name: Main Branch CI/CD
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.repository }}-main-release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    uses: hatlabs/shared-workflows/.github/workflows/build-release.yml@main
+    with:
+      package-name: halos-halpi2-desktop
+      package-description: 'HALPI2 desktop variant metapackage'
+      apt-distro: trixie
+      apt-component: hatlabs
+      skip-tests: true
+    secrets:
+      APT_REPO_PAT: ${{ secrets.APT_REPO_PAT }}

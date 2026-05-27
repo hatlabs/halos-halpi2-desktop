@@ -1,0 +1,3 @@
+# This package is not intended for Debian upload; no ITP bug exists for
+# its initial release. The warning is informational and not actionable.
+halos-halpi2-desktop: initial-upload-closes-no-bugs

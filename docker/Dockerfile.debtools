@@ -1,0 +1,16 @@
+FROM debian:trixie
+
+# Install Debian packaging tools and build dependencies
+RUN apt-get update && apt-get install -y \
+    debhelper \
+    build-essential \
+    fakeroot \
+    devscripts \
+    lintian \
+    bumpversion \
+    git-lfs \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace
+
+CMD ["/bin/bash"]
